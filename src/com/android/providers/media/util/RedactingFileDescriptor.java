@@ -42,7 +42,7 @@ import java.util.Arrays;
 @Deprecated
 public class RedactingFileDescriptor {
     private static final String TAG = "RedactingFileDescriptor";
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
 
     private volatile long[] mRedactRanges;
     private volatile long[] mFreeOffsets;
