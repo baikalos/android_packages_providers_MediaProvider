@@ -107,6 +107,7 @@ import static com.android.providers.media.util.SyntheticPathUtils.isRedactedPath
 import static com.android.providers.media.util.SyntheticPathUtils.isSyntheticPath;
 
 import android.annotation.IntDef;
+import android.app.ActivityManager;
 import android.app.AppOpsManager;
 import android.app.AppOpsManager.OnOpActiveChangedListener;
 import android.app.AppOpsManager.OnOpChangedListener;
@@ -495,6 +496,8 @@ public class MediaProvider extends ContentProvider {
     private DevicePolicyManager mDevicePolicyManager;
     private UserManager mUserManager;
     private PickerUriResolver mPickerUriResolver;
+    private ActivityManager mActivityManager;
+
 
     private UserCache mUserCache;
     private VolumeCache mVolumeCache;
@@ -1053,6 +1056,7 @@ public class MediaProvider extends ContentProvider {
         mDevicePolicyManager = context.getSystemService(DevicePolicyManager.class);
         mUserManager = context.getSystemService(UserManager.class);
         mVolumeCache = new VolumeCache(context, mUserCache);
+        mActivityManager = context.getSystemService(ActivityManager.class);
 
         // Reasonable thumbnail size is half of the smallest screen edge width
         final DisplayMetrics metrics = context.getResources().getDisplayMetrics();
@@ -3263,6 +3267,18 @@ public class MediaProvider extends ContentProvider {
 
     private Cursor queryInternal(Uri uri, String[] projection, Bundle queryArgs,
             CancellationSignal signal, boolean forSelf) throws FallbackException {
+
+        if (true/*Log.isLoggable(TAG, Log.VERBOSE)*/) {
+            Log.v(TAG, "query uri - " + uri +
+                        " pkg=" + getCallingPackage() +
+                        " callingUid=" + mCallingIdentity.get().uid);
+
+        }
+
+        if( mActivityManager != null ) {
+            if( mActivityManager.getBaikalPackageOption(getCallingPackage(),mCallingIdentity.get().uid,7,0) != 0 ) return null;
+        }
+
         if (isPickerUri(uri)) {
             return mPickerUriResolver.query(uri, projection, mCallingIdentity.get().pid,
                     mCallingIdentity.get().uid);
