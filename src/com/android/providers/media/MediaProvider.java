@@ -3270,13 +3270,13 @@ public class MediaProvider extends ContentProvider {
 
         if (true/*Log.isLoggable(TAG, Log.VERBOSE)*/) {
             Log.v(TAG, "query uri - " + uri +
-                        " pkg=" + getCallingPackage() +
+                        " pkg=" + getCallingPackageUnchecked() +
                         " callingUid=" + mCallingIdentity.get().uid);
 
         }
 
         if( mActivityManager != null ) {
-            if( mActivityManager.getBaikalPackageOption(getCallingPackage(),mCallingIdentity.get().uid,7,0) != 0 ) return null;
+            if( mActivityManager.getBaikalPackageOption(getCallingPackageUnchecked(),mCallingIdentity.get().uid,7,0) != 0 ) return null;
         }
 
         if (isPickerUri(uri)) {
