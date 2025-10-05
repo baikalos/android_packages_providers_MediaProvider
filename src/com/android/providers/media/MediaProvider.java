@@ -3268,7 +3268,7 @@ public class MediaProvider extends ContentProvider {
     private Cursor queryInternal(Uri uri, String[] projection, Bundle queryArgs,
             CancellationSignal signal, boolean forSelf) throws FallbackException {
 
-        if (true/*Log.isLoggable(TAG, Log.VERBOSE)*/) {
+        if (Log.isLoggable(TAG, Log.VERBOSE)) {
             Log.v(TAG, "query uri - " + uri +
                         " pkg=" + getCallingPackageUnchecked() +
                         " callingUid=" + mCallingIdentity.get().uid);
@@ -3276,7 +3276,10 @@ public class MediaProvider extends ContentProvider {
         }
 
         if( mActivityManager != null ) {
-            if( mActivityManager.getBaikalPackageOption(getCallingPackageUnchecked(),mCallingIdentity.get().uid,7,0) != 0 ) return null;
+            if( mActivityManager.getBaikalPackageOption(getCallingPackageUnchecked(),mCallingIdentity.get().uid,7,0) != 0 ) {
+                Log.w(TAG,"Baikal blocked mdia provider access from :" + getCallingPackageUnchecked() + "/" + mCallingIdentity.get().uid);
+                return null;
+            }
         }
 
         if (isPickerUri(uri)) {
