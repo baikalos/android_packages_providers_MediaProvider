@@ -195,6 +195,7 @@ import android.app.PendingIntent;
 import android.app.RecoverableSecurityException;
 import android.app.RemoteAction;
 import android.app.compat.CompatChanges;
+import android.baikalos.BaikalAppProfile;
 import android.compat.annotation.ChangeId;
 import android.compat.annotation.EnabledAfter;
 import android.compat.annotation.EnabledSince;
@@ -4004,6 +4005,12 @@ public class MediaProvider extends ContentProvider {
         if (isPickerUri(uri)) {
             return mPickerUriResolver.query(uri, projection, mCallingIdentity.get().pid,
                     mCallingIdentity.get().uid, mCallingIdentity.get().getPackageName());
+        }
+
+        if( getContext().getBaikalContext().getBaikalPackageOption(getCallingPackageUnchecked(),
+                mCallingIdentity.get().uid,BaikalAppProfile.BAIKAL_OPCODE_BLOCK_MEDIA,0) != 0 ) {
+            Log.w(TAG,"Baikal blocked mdia provider access from :" + getCallingPackageUnchecked() + "/" + mCallingIdentity.get().uid);
+            return null;
         }
 
         final String volumeName = getVolumeName(uri);
